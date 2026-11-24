@@ -19,7 +19,11 @@ public partial class ConcesionariaDbContext : DbContext
 
     public virtual DbSet<Clientes> Clientes { get; set; }
 
+    public virtual DbSet<Cuentas> Cuentas { get; set; }
+
     public virtual DbSet<Marcas> Marcas { get; set; }
+
+    public virtual DbSet<Sucursales> Sucursales { get; set; }
 
     public virtual DbSet<Vendedores> Vendedores { get; set; }
 
@@ -37,14 +41,30 @@ public partial class ConcesionariaDbContext : DbContext
             entity.Property(e => e.NoSerie)
                 .HasMaxLength(10)
                 .IsUnicode(false);
+            entity.Property(e => e.Color)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.Imagen)
+                .HasMaxLength(255)
+                .IsUnicode(false);
             entity.Property(e => e.Modelo)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.Precio).HasColumnType("decimal(12, 2)");
+            entity.Property(e => e.Tipo)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasDefaultValue("Carro");
 
             entity.HasOne(d => d.IdMarcaNavigation).WithMany(p => p.Carros)
                 .HasForeignKey(d => d.IdMarca)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Carros_Marcas");
+
+            entity.HasOne(d => d.IdSucursalNavigation).WithMany(p => p.Carros)
+                .HasForeignKey(d => d.IdSucursal)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Carros_Sucursales");
         });
 
         modelBuilder.Entity<Clientes>(entity =>
@@ -65,6 +85,31 @@ public partial class ConcesionariaDbContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<Cuentas>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Cuentas__3214EC07DB1A4926");
+
+            entity.HasIndex(e => e.Correo, "UQ__Cuentas__60695A196B5B6B70").IsUnique();
+
+            entity.Property(e => e.Correo)
+                .HasMaxLength(150)
+                .IsUnicode(false);
+            entity.Property(e => e.NoCliente)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.PasswordHash)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.Rol)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasDefaultValue("Cliente");
+
+            entity.HasOne(d => d.NoClienteNavigation).WithMany(p => p.Cuentas)
+                .HasForeignKey(d => d.NoCliente)
+                .HasConstraintName("FK_Cuentas_Clientes");
+        });
+
         modelBuilder.Entity<Marcas>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Marcas__3214EC073798D3B1");
@@ -75,7 +120,22 @@ public partial class ConcesionariaDbContext : DbContext
             entity.Property(e => e.Clave)
                 .HasMaxLength(15)
                 .IsUnicode(false);
+            entity.Property(e => e.Logo)
+                .HasMaxLength(255)
+                .IsUnicode(false);
             entity.Property(e => e.NombreMarca)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Sucursales>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Sucursal__3214EC07AC21E510");
+
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.Latitud).HasColumnType("decimal(9, 6)");
+            entity.Property(e => e.Longitud).HasColumnType("decimal(9, 6)");
+            entity.Property(e => e.Nombre)
                 .HasMaxLength(100)
                 .IsUnicode(false);
         });
@@ -107,6 +167,7 @@ public partial class ConcesionariaDbContext : DbContext
             entity.Property(e => e.NoVenta)
                 .HasMaxLength(10)
                 .IsUnicode(false);
+            entity.Property(e => e.Fecha).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.NoCliente)
                 .HasMaxLength(10)
                 .IsUnicode(false);
@@ -116,6 +177,7 @@ public partial class ConcesionariaDbContext : DbContext
             entity.Property(e => e.NoVendedor)
                 .HasMaxLength(10)
                 .IsUnicode(false);
+            entity.Property(e => e.Precio).HasColumnType("decimal(12, 2)");
 
             entity.HasOne(d => d.NoClienteNavigation).WithMany(p => p.Ventas)
                 .HasForeignKey(d => d.NoCliente)

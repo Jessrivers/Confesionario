@@ -11,5 +11,7 @@ public partial class Marcas
 
     public string NombreMarca { get; set; } = null!;
 
+    public string? Logo { get; set; }
+
     public virtual ICollection<Carros> Carros { get; set; } = new List<Carros>();
 }
