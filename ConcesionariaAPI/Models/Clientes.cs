@@ -13,5 +13,7 @@ public partial class Clientes
 
     public string? Correo { get; set; }
 
+    public virtual ICollection<Cuentas> Cuentas { get; set; } = new List<Cuentas>();
+
     public virtual ICollection<Ventas> Ventas { get; set; } = new List<Ventas>();
 }

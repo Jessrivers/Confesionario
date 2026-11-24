@@ -13,6 +13,10 @@ public partial class Ventas
 
     public string NoVendedor { get; set; } = null!;
 
+    public DateTime Fecha { get; set; }
+
+    public decimal Precio { get; set; }
+
     public virtual Clientes NoClienteNavigation { get; set; } = null!;
 
     public virtual Carros NoSerieNavigation { get; set; } = null!;
